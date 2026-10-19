@@ -22,7 +22,7 @@ with st.expander("📖 **Panduan Penggunaan Tools (Baca Sebelum Memulai)**", exp
     #### 1️⃣ Persiapan File Input
     * **File 1 (Data Sebelum Diverifikasi):** Unggah file master data peserta lengkap (mendukung format `.csv` atau `.xlsx`) yang berisi informasi registrasi, email, nama, nomor telepon, dan atribut lainnya.
     * **File 2 (Data Sesudah Diverifikasi):** Unggah file daftar email yang sudah dipastikan keaktifannya atau telah melalui proses verifikasi sebelumnya.
-    * *💡 **Belum melakukan verifikasi email?** Anda bisa melakukan proses verifikasi terlebih dahulu melalui [Email Verifier (Klik Disini)](https://check.emailverifier.online/bulk-verify-email/app/my_list.php).*
+    * *💡 **Belum melakukan verifikasi email?** Anda bisa melakukan proses verifikasi terlebih dahulu melalui [Email Verifier](https://check.emailverifier.online/bulk-verify-email/app/my_list.php).*
 
     #### 2️⃣ Konfigurasi & Mapping Kolom
     * Setelah kedua file berhasil diunggah, sistem akan membaca header kolom dari masing-masing file secara otomatis.

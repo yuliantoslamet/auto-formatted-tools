@@ -20,7 +20,7 @@ col_up1, col_up2 = st.columns(2)
 with col_up1:
   st.subheader("1. File Data Peserta Lengkap (File 1)")
   file1 = st.file_uploader(
-      "Unggah CSV atau Excel (Data Lengkap)",
+      "Unggah CSV atau Excel (Data Sebelum di Verif)",
       type=["csv", "xlsx"],
       key="file1",
   )
@@ -28,7 +28,7 @@ with col_up1:
 with col_up2:
   st.subheader("2. File Daftar Email Aktif (File 2)")
   file2 = st.file_uploader(
-      "Unggah CSV atau Excel (Daftar Email Filter)",
+      "Unggah CSV atau Excel (Data Sesudah di Verif)",
       type=["csv", "xlsx"],
       key="file2",
   )

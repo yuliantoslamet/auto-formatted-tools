@@ -4,13 +4,12 @@ import pandas as pd
 import streamlit as st
 
 st.set_page_config(
-    page_title="Webinar Data Processor", page_icon="📊", layout="wide"
+    page_title="Automated Data Validator", page_icon="📊", layout="wide"
 )
 
-st.title("📊 Webinar Data Processor Tool")
+st.title("📊 Automated Data Validator")
 st.write(
-    "Unggah data peserta lengkap dan daftar email aktif untuk melakukan filter"
-    " serta pencocokan kolom secara dinamis."
+    "Sistem otomatisasi pintar untuk menyaring dan memformat data peserta berdasarkan daftar email aktif."
 )
 
 st.divider()

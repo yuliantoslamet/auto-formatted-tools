@@ -87,14 +87,14 @@ if file1 and file2:
           "Nama File Hasil (Tanpa Ekstensi):", value="hasil_final"
       )
 
-    # --- 3. OPSI ATTRIBUTES (JSON) ---
+# --- 3. OPSI ATTRIBUTES (JSON) ---
     st.divider()
     st.subheader("🏷️ Opsi Atribut JSON Kustom")
 
     use_attributes = st.checkbox(
         "Gunakan Kolom 'attributes' (JSON)", value=True
     )
-    selected_attr_cols = []
+    attr_mapping = {}
 
     if use_attributes:
       selected_attr_cols = st.multiselect(
@@ -104,10 +104,43 @@ if file1 and file2:
           default=[col for col in cols1 if col not in [email_col_file1]],
       )
 
+      if selected_attr_cols:
+        st.write("##### 🛠️ Pengaturan Key JSON Kustom (Opsional)")
+        st.caption(
+            "Ubah nama key JSON sesuai kebutuhan (secara default akan"
+            " menggunakan nama header asli):"
+        )
+
+        # Menampilkan input bidang untuk setiap kolom yang dipilih
+        cols_per_row = 2
+        for i in range(0, len(selected_attr_cols), cols_per_row):
+          row_cols = st.columns(cols_per_row)
+          for j, col_name in enumerate(
+              selected_attr_cols[i : i + cols_per_row]
+          ):
+            with row_cols[j]:
+              # Menentukan nilai default otomatis yang lebih rapi/bebas karakter khusus jika ada
+              default_key = col_name.lower().strip()
+              if "nama" in default_key:
+                default_key = "name"
+              elif "telp" in default_key or "wa" in default_key:
+                default_key = "no wa"
+              elif "sertifikat" in default_key:
+                default_key = "sertifikat"
+
+              custom_key = st.text_input(
+                  f"Key JSON untuk `{col_name}`:",
+                  value=default_key,
+                  key=f"attr_key_{col_name}",
+              )
+              attr_mapping[col_name] = (
+                  custom_key.strip() if custom_key.strip() else col_name
+              )
+
     # --- 4. PROSES DATA & HASIL ---
     st.divider()
     if st.button("🚀 Proses Data Sekarang", type="primary"):
-      # Clean data (menghapus spasi di email agar match presisi)
+      # Cleaning email
       df1[email_col_file1] = (
           df1[email_col_file1].astype(str).str.strip().str.lower()
       )
@@ -122,18 +155,21 @@ if file1 and file2:
       df_filtered = df_filtered.fillna("")
 
       # Buat kolom attributes jika diaktifkan
-      if use_attributes and selected_attr_cols:
+      if use_attributes and attr_mapping:
 
         def make_attributes_json(row):
-          # Membuat dictionary berisi header yang dipilih user beserta nilainya
-          attr_dict = {col: row[col] for col in selected_attr_cols}
+          # Membuat dictionary dengan key kustom buatan user
+          attr_dict = {
+              custom_key: row[original_col]
+              for original_col, custom_key in attr_mapping.items()
+          }
           return json.dumps(attr_dict, ensure_ascii=False)
 
         df_filtered["attributes"] = df_filtered.apply(
             make_attributes_json, axis=1
         )
 
-      # Rename kolom standar
+      # Rename kolom utama
       rename_dict = {email_col_file1: "email", name_col_file1: "name"}
       df_filtered = df_filtered.rename(columns=rename_dict)
 
@@ -144,7 +180,7 @@ if file1 and file2:
 
       df_result = df_filtered[final_cols]
 
-      # Ringkasan Statistik
+      # Ringkasan Statistik & Preview
       st.subheader("📈 Hasil Pemrosesan")
       st.info(
           f"Total data di File 1: **{len(df1)}** | Total email aktif di File 2:"
@@ -152,15 +188,13 @@ if file1 and file2:
           f" **{len(df_result)}**"
       )
 
-      # Preview Data
       st.dataframe(df_result.head(10), use_container_width=True)
 
-      # Konversi ke CSV untuk di-download
+      # Export CSV
       csv_buffer = io.StringIO()
       df_result.to_csv(csv_buffer, index=False, encoding="utf-8-sig")
       csv_data = csv_buffer.getvalue()
 
-      # Tombol Unduh
       final_file_name = f"{output_filename.strip() if output_filename else 'hasil_final'}.csv"
       st.download_button(
           label=f"📥 Unduh {final_file_name}",
@@ -168,6 +202,3 @@ if file1 and file2:
           file_name=final_file_name,
           mime="text/csv",
       )
-
-  except Exception as e:
-    st.error(f"Terjadi kesalahan saat memproses file: {str(e)}")

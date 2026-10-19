@@ -14,6 +14,33 @@ st.write(
 
 st.divider()
 
+# --- PANDUAN PENGGUNAAN (USER GUIDE) ---
+with st.expander("📖 **Panduan Penggunaan Tools (Baca Sebelum Memulai)**", expanded=False):
+    st.markdown("""
+    Selamat datang di **Automated Data Validator**! Tools ini dirancang untuk membantu Anda menyaring, memetakan kolom, dan memformat data peserta dengan cepat dan akurat. Ikuti langkah-langkah di bawah ini untuk menggunakan tools ini dengan optimal:
+
+    #### 1️⃣ Persiapan File Input
+    * **File 1 (Data Sebelum Diverifikasi):** Unggah file master data peserta lengkap (mendukung format `.csv` atau `.xlsx`) yang berisi informasi registrasi, email, nama, nomor telepon, dan atribut lainnya.
+    * **File 2 (Data Sesudah Diverifikasi):** Unggah file daftar email yang sudah dipastikan keaktifannya atau telah melalui proses verifikasi sebelumnya.
+    * *💡 **Belum melakukan verifikasi email?** Anda bisa melakukan proses verifikasi terlebih dahulu melalui [Email Verifier (Klik Disini)](https://check.emailverifier.online/bulk-verify-email/app/my_list.php).*
+
+    #### 2️⃣ Konfigurasi & Mapping Kolom
+    * Setelah kedua file berhasil diunggah, sistem akan membaca header kolom dari masing-masing file secara otomatis.
+    * Pilih kolom yang merepresentasikan **Email** dan **Nama** pada File 1 serta kolom **Email** penyaring pada File 2.
+    * Tentukan nama file hasil luaran (*output*) sesuai keinginan Anda pada kolom teks yang tersedia (default: `hasil_final`).
+
+    #### 3️⃣ Pengaturan Atribut JSON Kustom (Opsional)
+    * Centang opsi **Gunakan Kolom 'attributes' (JSON)** jika Anda ingin menggabungkan beberapa data tambahan (seperti nomor WhatsApp, instansi, atau link sertifikat) ke dalam satu kolom format JSON.
+    * Anda bebas mengubah dan menyesuaikan nama kunci (*key*) JSON sesuai kebutuhan sistem tujuan Anda (misalnya mengubah `NO TELP` menjadi `no wa`).
+
+    #### 4️⃣ Proses & Unduh Hasil
+    * Klik tombol utama **🚀 Proses Data Sekarang**.
+    * Periksa ringkasan statistik kecocokan data dan tinjau pratinjau tabel hasilnya.
+    * Klik tombol **📥 Unduh [nama_file].csv** untuk menyimpan file akhir yang sudah bersih dan siap digunakan untuk *campaign* atau laporan Anda!
+    """)
+
+st.divider()
+
 # --- 1. UPLOAD FILE ---
 col_up1, col_up2 = st.columns(2)
 

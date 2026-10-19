@@ -1,4 +1,4 @@
-# 📊 Webinar Data Processor Tool
+# 📊 Automated Data Validator
 
 Aplikasi web interaktif (*web app*) berbasis Python dan Streamlit untuk memfilter, mencocokkan, serta mentransformasi data peserta webinar secara dinamis. Tools ini dirancang untuk memudahkan penyiapan data siap pakai sebelum diunggah ke sistem *email marketing* atau *campaign distribution*.
 

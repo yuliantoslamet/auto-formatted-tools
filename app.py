@@ -87,7 +87,7 @@ if file1 and file2:
           "Nama File Hasil (Tanpa Ekstensi):", value="hasil_final"
       )
 
-# --- 3. OPSI ATTRIBUTES (JSON) ---
+    # --- 3. OPSI ATTRIBUTES (JSON) ---
     st.divider()
     st.subheader("🏷️ Opsi Atribut JSON Kustom")
 
@@ -202,3 +202,6 @@ if file1 and file2:
           file_name=final_file_name,
           mime="text/csv",
       )
+
+  except Exception as e:
+    st.error(f"Terjadi kesalahan saat memproses file: {str(e)}")

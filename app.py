@@ -16,11 +16,11 @@ st.write(
 @st.dialog("📖 Panduan Penggunaan Automated Data Validator", width="large")
 def show_guide_modal():
     st.markdown("""
-    Selamat datang di **Automated Data Validator**! Tools ini dirancang untuk membantu Anda menyaring, memetakan kolom, dan memformat data peserta dengan cepat dan akurat. Ikuti langkah-langkah di bawah ini untuk menggunakan tools ini dengan optimal:
+    Selamat datang di **Automated Data Validator**[cite: 2]! Tools ini dirancang untuk membantu Anda menyaring, memetakan kolom, dan memformat data peserta dengan cepat dan akurat. Ikuti langkah-langkah di bawah ini untuk menggunakan tools ini dengan optimal:
 
     #### 1️⃣ Persiapan File Input
-    * **File 1 (Data Sebelum Diverifikasi):** Unggah file master data peserta lengkap (mendukung format `.csv` atau `.xlsx`) yang berisi informasi registrasi, email, nama, nomor telepon, dan atribut lainnya.
-    * **File 2 (Data Sesudah Diverifikasi):** Unggah file daftar email yang sudah dipastikan keaktifannya atau telah melalui proses verifikasi sebelumnya.
+    * **File 1 (Data Sebelum Diverifikasi):** Unggah file master data peserta lengkap (mendukung format `.csv` atau `.xlsx`) yang berisi informasi registrasi, email, nama, nomor telepon, dan atribut lainnya[cite: 3].
+    * **File 2 (Data Sesudah Diverifikasi):** Unggah file daftar email yang sudah dipastikan keaktifannya atau telah melalui proses verifikasi sebelumnya[cite: 4].
     * *💡 **Belum melakukan verifikasi email?** Anda bisa melakukan proses verifikasi terlebih dahulu melalui [Email Verifier](https://link-tools-verifikasi-anda.com).*
 
     #### 2️⃣ Konfigurasi & Mapping Kolom
@@ -41,31 +41,45 @@ def show_guide_modal():
     if st.button("Tutup Panduan", type="primary", use_container_width=True):
         st.rerun()
 
-# --- 2. CSS UNTUK TOMBOL MELAYANG DI POJOK KANAN BAWAH ---
-st.markdown(
-    """
-    <style>
-    /* Mengatur posisi tombol streamit agar melayang di pojok kanan bawah */
-    .floating-container {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        z-index: 99999;
-    }
-    </style>
-""",
-    unsafe_allow_html=True,
+st.set_page_config(
+    page_title="Automated Data Validator", page_icon="📊", layout="wide"
 )
+
+# --- 2. HEADER DENGAN TATA LETAK KOLOM (JUDUL DI KIRI, TOMBOL BANTUAN DI KANAN ATAS) ---
+col_title, col_btn = st.columns([5, 1])
+
+with col_title:
+    st.title("📊 Automated Data Validator")
+    st.write(
+        "Sistem otomatisasi pintar untuk menyaring dan memformat data peserta berdasarkan daftar email aktif[cite: 2]."
+    )
+
+with col_btn:
+    # Memberi sedikit spasi agar sejajar rapi dengan tinggi judul
+    st.write("") 
+    if st.button("❓ Bantuan / Panduan", type="primary", use_container_width=True):
+        show_guide_modal()
 
 st.divider()
 
-# --- 3. WIDGET TOMBOL MELAYANG (TRIGGER MODAL) ---
-# Menggunakan container melayang agar tombol bawaan Streamlit bisa diposisikan mengambang
-st.markdown('<div class="floating-container">', unsafe_allow_html=True)
-if st.button("❓ Bantuan / Panduan", type="primary", use_container_width=False):
-    show_guide_modal()
-st.markdown('</div>', unsafe_allow_html=True)
+# --- 3. UPLOAD FILE (KINI POSISINYA LEBIH KE ATAS DAN RAPI) ---
+col_up1, col_up2 = st.columns(2)
 
+with col_up1:
+  st.subheader("1. File Data Peserta Lengkap (File 1)")
+  file1 = st.file_uploader(
+      "Unggah CSV atau Excel (Data Sebelum di Verif)",
+      type=["csv", "xlsx"],
+      key="file1",
+  )
+
+with col_up2:
+  st.subheader("2. File Daftar Email Aktif (File 2)")
+  file2 = st.file_uploader(
+      "Unggah CSV atau Excel (Data Sesudah di Verif)",
+      type=["csv", "xlsx"],
+      key="file2",
+  )
 # --- 1. UPLOAD FILE ---
 col_up1, col_up2 = st.columns(2)
 

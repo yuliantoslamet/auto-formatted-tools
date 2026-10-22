@@ -12,50 +12,10 @@ st.write(
     "Sistem otomatisasi pintar untuk menyaring dan memformat data peserta berdasarkan daftar email aktif."
 )
 
-st.divider()
-
-# --- FLOATING HELP BUTTON & MODAL (PANDUAN MELAYANG) ---
-st.markdown(
-    """
-    <style>
-    /* Styling Tombol Melayang di Pojok Kanan Bawah */
-    .floating-help-btn {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background-color: #ff4b4b;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 50px;
-        font-weight: bold;
-        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
-        z-index: 99999;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-    .floating-help-btn:hover {
-        background-color: #ff2b2b;
-        color: white;
-        transform: scale(1.05);
-        box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.4);
-        text-decoration: none;
-    }
-    </style>
-
-    <!-- Tombol Melayang yang memicu dialog/expander di dalam aplikasi -->
-    <a href="#panduan-penggunaan-tools" class="floating-help-btn">
-        ❓ Bantuan / Panduan
-    </a>
-""",
-    unsafe_allow_html=True,
-)
-
-# --- PANDUAN PENGGUNAAN (Ditaruh di bagian bawah atau dalam expander tersembunyi) ---
-with st.expander("📖 **Panduan Penggunaan Tools (Klik untuk membaca)**", expanded=False):
-  st.markdown("""
+# --- 1. DEFINISI POP-UP MODAL PANDUAN ---
+@st.dialog("📖 Panduan Penggunaan Automated Data Validator", width="large")
+def show_guide_modal():
+    st.markdown("""
     Selamat datang di **Automated Data Validator**! Tools ini dirancang untuk membantu Anda menyaring, memetakan kolom, dan memformat data peserta dengan cepat dan akurat. Ikuti langkah-langkah di bawah ini untuk menggunakan tools ini dengan optimal:
 
     #### 1️⃣ Persiapan File Input
@@ -77,8 +37,35 @@ with st.expander("📖 **Panduan Penggunaan Tools (Klik untuk membaca)**", expan
     * Periksa ringkasan statistik kecocokan data dan tinjau pratinjau tabel hasilnya.
     * Klik tombol **📥 Unduh [nama_file].csv** untuk menyimpan file akhir yang sudah bersih dan siap digunakan untuk *campaign* atau laporan Anda!
     """)
+    
+    if st.button("Tutup Panduan", type="primary", use_container_width=True):
+        st.rerun()
+
+# --- 2. CSS UNTUK TOMBOL MELAYANG DI POJOK KANAN BAWAH ---
+st.markdown(
+    """
+    <style>
+    /* Mengatur posisi tombol streamit agar melayang di pojok kanan bawah */
+    .floating-container {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 99999;
+    }
+    </style>
+""",
+    unsafe_allow_html=True,
+)
 
 st.divider()
+
+# --- 3. WIDGET TOMBOL MELAYANG (TRIGGER MODAL) ---
+# Menggunakan container melayang agar tombol bawaan Streamlit bisa diposisikan mengambang
+st.markdown('<div class="floating-container">', unsafe_allow_html=True)
+if st.button("❓ Bantuan / Panduan", type="primary", use_container_width=False):
+    show_guide_modal()
+st.markdown('</div>', unsafe_allow_html=True)
+
 # --- 1. UPLOAD FILE ---
 col_up1, col_up2 = st.columns(2)
 

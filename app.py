@@ -14,15 +14,54 @@ st.write(
 
 st.divider()
 
-# --- PANDUAN PENGGUNAAN (USER GUIDE) ---
-with st.expander("📖 **Panduan Penggunaan Tools (Baca Sebelum Memulai)**", expanded=False):
-    st.markdown("""
+# --- FLOATING HELP BUTTON & MODAL (PANDUAN MELAYANG) ---
+st.markdown(
+    """
+    <style>
+    /* Styling Tombol Melayang di Pojok Kanan Bawah */
+    .floating-help-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background-color: #ff4b4b;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 50px;
+        font-weight: bold;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    .floating-help-btn:hover {
+        background-color: #ff2b2b;
+        color: white;
+        transform: scale(1.05);
+        box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.4);
+        text-decoration: none;
+    }
+    </style>
+
+    <!-- Tombol Melayang yang memicu dialog/expander di dalam aplikasi -->
+    <a href="#panduan-penggunaan-tools" class="floating-help-btn">
+        ❓ Bantuan / Panduan
+    </a>
+""",
+    unsafe_allow_html=True,
+)
+
+# --- PANDUAN PENGGUNAAN (Ditaruh di bagian bawah atau dalam expander tersembunyi) ---
+with st.expander("📖 **Panduan Penggunaan Tools (Klik untuk membaca)**", expanded=False):
+  st.markdown("""
     Selamat datang di **Automated Data Validator**! Tools ini dirancang untuk membantu Anda menyaring, memetakan kolom, dan memformat data peserta dengan cepat dan akurat. Ikuti langkah-langkah di bawah ini untuk menggunakan tools ini dengan optimal:
 
     #### 1️⃣ Persiapan File Input
     * **File 1 (Data Sebelum Diverifikasi):** Unggah file master data peserta lengkap (mendukung format `.csv` atau `.xlsx`) yang berisi informasi registrasi, email, nama, nomor telepon, dan atribut lainnya.
     * **File 2 (Data Sesudah Diverifikasi):** Unggah file daftar email yang sudah dipastikan keaktifannya atau telah melalui proses verifikasi sebelumnya.
-    * *💡 **Belum melakukan verifikasi email?** Anda bisa melakukan proses verifikasi terlebih dahulu melalui [Email Verifier](https://check.emailverifier.online/bulk-verify-email/app/my_list.php).*
+    * *💡 **Belum melakukan verifikasi email?** Anda bisa melakukan proses verifikasi terlebih dahulu melalui [Email Verifier](https://link-tools-verifikasi-anda.com).*
 
     #### 2️⃣ Konfigurasi & Mapping Kolom
     * Setelah kedua file berhasil diunggah, sistem akan membaca header kolom dari masing-masing file secara otomatis.
@@ -40,7 +79,6 @@ with st.expander("📖 **Panduan Penggunaan Tools (Baca Sebelum Memulai)**", exp
     """)
 
 st.divider()
-
 # --- 1. UPLOAD FILE ---
 col_up1, col_up2 = st.columns(2)
 

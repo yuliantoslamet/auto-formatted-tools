@@ -3,15 +3,6 @@ import io
 import pandas as pd
 import streamlit as st
 
-st.set_page_config(
-    page_title="Automated Data Validator", page_icon="📊", layout="wide"
-)
-
-st.title("📊 Automated Data Validator")
-st.write(
-    "Sistem otomatisasi pintar untuk menyaring dan memformat data peserta berdasarkan daftar email aktif."
-)
-
 # --- 1. DEFINISI POP-UP MODAL PANDUAN ---
 @st.dialog("📖 Panduan Penggunaan Automated Data Validator", width="large")
 def show_guide_modal():

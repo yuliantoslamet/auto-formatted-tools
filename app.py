@@ -42,7 +42,7 @@ col_title, col_btn = st.columns([5, 1])
 with col_title:
     st.title("📊 Automated Data Validator")
     st.write(
-        "Sistem otomatisasi pintar untuk menyaring dan memformat data peserta berdasarkan daftar email aktif[cite: 2]."
+        "Sistem otomatisasi pintar untuk menyaring dan memformat data peserta berdasarkan daftar email aktif."
     )
 
 with col_btn:

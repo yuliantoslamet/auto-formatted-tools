@@ -1,12 +1,12 @@
-import json
 import io
+import json
 import pandas as pd
 import streamlit as st
 
 # --- 1. DEFINISI POP-UP MODAL PANDUAN ---
 @st.dialog("📖 Panduan Penggunaan Automated Data Validator", width="large")
 def show_guide_modal():
-    st.markdown("""
+  st.markdown("""
     Selamat datang di **Automated Data Validator**[cite: 2]! Tools ini dirancang untuk membantu Anda menyaring, memetakan kolom, dan memformat data peserta dengan cepat dan akurat. Ikuti langkah-langkah di bawah ini untuk menggunakan tools ini dengan optimal:
 
     #### 1️⃣ Persiapan File Input
@@ -28,9 +28,10 @@ def show_guide_modal():
     * Periksa ringkasan statistik kecocokan data dan tinjau pratinjau tabel hasilnya.
     * Klik tombol **📥 Unduh [nama_file].csv** untuk menyimpan file akhir yang sudah bersih dan siap digunakan untuk *campaign* atau laporan Anda!
     """)
-    
-    if st.button("Tutup Panduan", type="primary", use_container_width=True):
-        st.rerun()
+
+  if st.button("Tutup Panduan", type="primary", use_container_width=True):
+    st.rerun()
+
 
 st.set_page_config(
     page_title="Automated Data Validator", page_icon="📊", layout="wide"
@@ -40,20 +41,20 @@ st.set_page_config(
 col_title, col_btn = st.columns([5, 1])
 
 with col_title:
-    st.title("📊 Automated Data Validator")
-    st.write(
-        "Sistem otomatisasi pintar untuk menyaring dan memformat data peserta berdasarkan daftar email aktif."
-    )
+  st.title("📊 Automated Data Validator")
+  st.write(
+      "Sistem otomatisasi pintar untuk menyaring dan memformat data peserta"
+      " berdasarkan daftar email aktif."
+  )
 
 with col_btn:
-    # Memberi sedikit spasi agar sejajar rapi dengan tinggi judul
-    st.write("") 
-    if st.button("❓ Bantuan / Panduan", type="primary", use_container_width=True):
-        show_guide_modal()
+  st.write("")
+  if st.button("❓ Bantuan / Panduan", type="primary", use_container_width=True):
+    show_guide_modal()
 
 st.divider()
 
-# --- 3. UPLOAD FILE (KINI POSISINYA LEBIH KE ATAS DAN RAPI) ---
+# --- 3. UPLOAD FILE ---
 col_up1, col_up2 = st.columns(2)
 
 with col_up1:
@@ -71,6 +72,7 @@ with col_up2:
       type=["csv", "xlsx"],
       key="file2",
   )
+
 
 # Fungsi Pembaca File
 def load_data(uploaded_file):
@@ -157,7 +159,6 @@ if file1 and file2:
               selected_attr_cols[i : i + cols_per_row]
           ):
             with row_cols[j]:
-              # Menentukan nilai default otomatis yang lebih rapi/bebas karakter khusus jika ada
               default_key = col_name.lower().strip()
               if "nama" in default_key:
                 default_key = "name"
@@ -186,6 +187,9 @@ if file1 and file2:
           df2[email_col_file2].astype(str).str.strip().str.lower()
       )
 
+      # Mencegah duplikat di File 2 agar jumlah data pencocokan akurat
+      df2 = df2.drop_duplicates(subset=[email_col_file2])
+
       # Filter berdasarkan keberadaan email di File 2
       df_filtered = df1[
           df1[email_col_file1].isin(df2[email_col_file2])
@@ -196,7 +200,6 @@ if file1 and file2:
       if use_attributes and attr_mapping:
 
         def make_attributes_json(row):
-          # Membuat dictionary dengan key kustom buatan user
           attr_dict = {
               custom_key: row[original_col]
               for original_col, custom_key in attr_mapping.items()

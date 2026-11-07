@@ -187,13 +187,9 @@ if file1 and file2:
           df2[email_col_file2].astype(str).str.strip().str.lower()
       )
 
-      # Membersihkan duplikat di File 2 (penyaring utama) agar jumlahnya bersih
-      df2_clean = df2.drop_duplicates(subset=[email_col_file2]).copy()
-
-      # MENGUBAH ALUR: Mengambil semua data berpatokan dari File 2, lalu mencocokkan data File 1
-      # Menggunakan merge (left join) agar jumlah baris hasil akhir persis sama dengan File 2
+      # MENGUBAH ALUR: Mengambil semua data berpatokan dari File 2
       df_merged = pd.merge(
-          df2_clean,
+          df2,
           df1,
           left_on=email_col_file2,
           right_on=email_col_file1,
@@ -202,14 +198,13 @@ if file1 and file2:
       
       df_merged = df_merged.fillna("")
 
-      # Buat kolom attributes jika diaktifkan (menggunakan kolom-kolom dari File 1)
+      # Buat kolom attributes jika diaktifkan
       if use_attributes and attr_mapping:
 
         def make_attributes_json(row):
           attr_dict = {
               custom_key: row[original_col]
               for original_col, custom_key in attr_mapping.items()
-              # Memastikan kolom asal ada di baris data
               if original_col in row and str(row[original_col]) != ""
           }
           return json.dumps(attr_dict, ensure_ascii=False)
@@ -218,10 +213,8 @@ if file1 and file2:
             make_attributes_json, axis=1
         )
 
-      # Menentukan kolom email dan nama final (mengambil dari File 2 sebagai acuan utama email)
+      # Menentukan kolom email dan nama final
       df_merged["email"] = df_merged[email_col_file2]
-      
-      # Jika nama di File 1 ada, gunakan nama dari File 1; jika tidak ada, kosongkan
       if name_col_file1 in df_merged.columns:
         df_merged["name"] = df_merged[name_col_file1]
       else:
@@ -234,12 +227,15 @@ if file1 and file2:
 
       df_result = df_merged[final_cols].copy()
 
+      # --- FILTER DUPLIKAT DI HASIL AKHIR ---
+      # Memastikan tidak ada email kembar/duplikat pada tabel hasil final
+      df_result = df_result.drop_duplicates(subset=["email"]).reset_index(drop=True)
+
       # Ringkasan Statistik & Preview
       st.subheader("📈 Hasil Pemrosesan")
       st.info(
-          f"Total data di File 1: **{len(df1)}** | Total email acuan di File 2:"
-          f" **{len(df2_clean)}** | Total data hasil akhir (Sinkron dengan File 2):"
-          f" **{len(df_result)}**"
+          f"Total data di File 1: **{len(df1)}** | Total data di File 2: **{len(df2)}** | "
+          f"Total data bersih (Setelah filter duplikat): **{len(df_result)}**"
       )
 
       st.dataframe(df_result.head(10), use_container_width=True)

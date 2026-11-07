@@ -7,11 +7,11 @@ import streamlit as st
 @st.dialog("📖 Panduan Penggunaan Automated Data Validator", width="large")
 def show_guide_modal():
   st.markdown("""
-    Selamat datang di **Automated Data Validator**[cite: 2]! Tools ini dirancang untuk membantu Anda menyaring, memetakan kolom, dan memformat data peserta dengan cepat dan akurat. Ikuti langkah-langkah di bawah ini untuk menggunakan tools ini dengan optimal:
+    Selamat datang di **Automated Data Validator**! Tools ini dirancang untuk membantu Anda menyaring, memetakan kolom, dan memformat data peserta dengan cepat dan akurat. Ikuti langkah-langkah di bawah ini untuk menggunakan tools ini dengan optimal:
 
     #### 1️⃣ Persiapan File Input
-    * **File 1 (Data Sebelum Diverifikasi):** Unggah file master data peserta lengkap (mendukung format `.csv` atau `.xlsx`) yang berisi informasi registrasi, email, nama, nomor telepon, dan atribut lainnya[cite: 3].
-    * **File 2 (Data Sesudah Diverifikasi):** Unggah file daftar email yang sudah dipastikan keaktifannya atau telah melalui proses verifikasi sebelumnya[cite: 4].
+    * **File 1 (Data Sebelum Diverifikasi):** Unggah file master data peserta lengkap (mendukung format `.csv` atau `.xlsx`) yang berisi informasi registrasi, email, nama, nomor telepon, dan atribut lainnya.
+    * **File 2 (Data Sesudah Diverifikasi):** Unggah file daftar email yang sudah dipastikan keaktifannya atau telah melalui proses verifikasi sebelumnya.
     * *💡 **Belum melakukan verifikasi email?** Anda bisa melakukan proses verifikasi terlebih dahulu melalui [Email Verifier](https://check.emailverifier.online/bulk-verify-email/app/my_list.php).*
 
     #### 2️⃣ Konfigurasi & Mapping Kolom

@@ -176,7 +176,7 @@ if file1 and file2:
                   custom_key.strip() if custom_key.strip() else col_name
               )
 
-    # --- 4. PROSES DATA & HASIL ---
+# --- 4. PROSES DATA & HASIL ---
     st.divider()
     if st.button("🚀 Proses Data Sekarang", type="primary"):
       # Cleaning email
@@ -187,45 +187,58 @@ if file1 and file2:
           df2[email_col_file2].astype(str).str.strip().str.lower()
       )
 
-      # Mencegah duplikat di File 2 agar jumlah data pencocokan akurat
-      df2 = df2.drop_duplicates(subset=[email_col_file2])
+      # Membersihkan duplikat di File 2 (penyaring utama) agar jumlahnya bersih
+      df2_clean = df2.drop_duplicates(subset=[email_col_file2]).copy()
 
-      # Filter berdasarkan keberadaan email di File 2
-      df_filtered = df1[
-          df1[email_col_file1].isin(df2[email_col_file2])
-      ].copy()
-      df_filtered = df_filtered.fillna("")
+      # MENGUBAH ALUR: Mengambil semua data berpatokan dari File 2, lalu mencocokkan data File 1
+      # Menggunakan merge (left join) agar jumlah baris hasil akhir persis sama dengan File 2
+      df_merged = pd.merge(
+          df2_clean,
+          df1,
+          left_on=email_col_file2,
+          right_on=email_col_file1,
+          how="left"
+      )
+      
+      df_merged = df_merged.fillna("")
 
-      # Buat kolom attributes jika diaktifkan
+      # Buat kolom attributes jika diaktifkan (menggunakan kolom-kolom dari File 1)
       if use_attributes and attr_mapping:
 
         def make_attributes_json(row):
           attr_dict = {
               custom_key: row[original_col]
               for original_col, custom_key in attr_mapping.items()
+              # Memastikan kolom asal ada di baris data
+              if original_col in row and str(row[original_col]) != ""
           }
           return json.dumps(attr_dict, ensure_ascii=False)
 
-        df_filtered["attributes"] = df_filtered.apply(
+        df_merged["attributes"] = df_merged.apply(
             make_attributes_json, axis=1
         )
 
-      # Rename kolom utama
-      rename_dict = {email_col_file1: "email", name_col_file1: "name"}
-      df_filtered = df_filtered.rename(columns=rename_dict)
+      # Menentukan kolom email dan nama final (mengambil dari File 2 sebagai acuan utama email)
+      df_merged["email"] = df_merged[email_col_file2]
+      
+      # Jika nama di File 1 ada, gunakan nama dari File 1; jika tidak ada, kosongkan
+      if name_col_file1 in df_merged.columns:
+        df_merged["name"] = df_merged[name_col_file1]
+      else:
+        df_merged["name"] = ""
 
       # Susun kolom akhir
       final_cols = ["email", "name"]
-      if use_attributes and "attributes" in df_filtered.columns:
+      if use_attributes and "attributes" in df_merged.columns:
         final_cols.append("attributes")
 
-      df_result = df_filtered[final_cols]
+      df_result = df_merged[final_cols].copy()
 
       # Ringkasan Statistik & Preview
       st.subheader("📈 Hasil Pemrosesan")
       st.info(
-          f"Total data di File 1: **{len(df1)}** | Total email aktif di File 2:"
-          f" **{len(df2)}** | Data berhasil dicocokkan:"
+          f"Total data di File 1: **{len(df1)}** | Total email acuan di File 2:"
+          f" **{len(df2_clean)}** | Total data hasil akhir (Sinkron dengan File 2):"
           f" **{len(df_result)}**"
       )
 

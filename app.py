@@ -10,23 +10,23 @@ def show_guide_modal():
     Selamat datang di **Automated Data Validator**! Tools ini dirancang untuk membantu Anda menyaring, memetakan kolom, dan memformat data peserta dengan cepat dan akurat. Ikuti langkah-langkah di bawah ini untuk menggunakan tools ini dengan optimal:
 
     #### 1️⃣ Persiapan File Input
-- **File 1 (Data Sebelum Diverifikasi):** Unggah file master data peserta lengkap (mendukung format `.csv` atau `.xlsx`) yang berisi informasi registrasi, email, nama, nomor telepon, dan atribut lainnya.
-- **File 2 (Data Sesudah Diverifikasi):** Unggah file daftar email yang sudah dipastikan keaktifannya atau telah melalui proses verifikasi sebelumnya.
-- *💡 **Belum melakukan verifikasi email?** Anda bisa melakukan proses verifikasi terlebih dahulu melalui [Email Verifier](https://check.emailverifier.online/bulk-verify-email/app/my_list.php).*
+    * **File 1 (Data Sebelum Diverifikasi):** Unggah file master data peserta lengkap (mendukung format `.csv` atau `.xlsx`) yang berisi informasi registrasi, email, nama, nomor telepon, dan atribut lainnya.
+    * **File 2 (Data Sesudah Diverifikasi):** Unggah file daftar email yang sudah dipastikan keaktifannya atau telah melalui proses verifikasi sebelumnya.
+    * *💡 **Belum melakukan verifikasi email?** Anda bisa melakukan proses verifikasi terlebih dahulu melalui [Email Verifier](https://check.emailverifier.online/bulk-verify-email/app/my_list.php).*
 
     #### 2️⃣ Konfigurasi & Mapping Kolom
-- Setelah kedua file berhasil diunggah, sistem akan membaca header kolom dari masing-masing file secara otomatis.
-- Pilih kolom yang merepresentasikan **Email** dan **Nama** pada File 1 serta kolom **Email** penyaring pada File 2.
-- Tentukan nama file hasil luaran (*output*) sesuai keinginan Anda pada kolom teks yang tersedia (default: `hasil_final`).
+    * Setelah kedua file berhasil diunggah, sistem akan membaca header kolom dari masing-masing file secara otomatis.
+    * Pilih kolom yang merepresentasikan **Email** dan **Nama** pada File 1 serta kolom **Email** penyaring pada File 2.
+    * Tentukan nama file hasil luaran (*output*) sesuai keinginan Anda pada kolom teks yang tersedia (default: `hasil_final`).
 
     #### 3️⃣ Pengaturan Atribut JSON Kustom (Opsional)
-- Centang opsi **Gunakan Kolom 'attributes' (JSON)** jika Anda ingin menggabungkan beberapa data tambahan (seperti nomor WhatsApp, instansi, atau link sertifikat) ke dalam satu kolom format JSON.
-- Anda bebas mengubah dan menyesuaikan nama kunci (*key*) JSON sesuai kebutuhan sistem tujuan Anda (misalnya mengubah `NO TELP` menjadi `no wa`).
+    * Centang opsi **Gunakan Kolom 'attributes' (JSON)** jika Anda ingin menggabungkan beberapa data tambahan (seperti nomor WhatsApp, instansi, atau link sertifikat) ke dalam satu kolom format JSON.
+    * Anda bebas mengubah dan menyesuaikan nama kunci (*key*) JSON sesuai kebutuhan sistem tujuan Anda (misalnya mengubah `NO TELP` menjadi `no wa`).
 
     #### 4️⃣ Proses & Unduh Hasil
-- Klik tombol utama **🚀 Proses Data Sekarang**.
-- Periksa ringkasan statistik kecocokan data dan tinjau pratinjau tabel hasilnya.
-- Klik tombol **📥 Unduh [nama_file].csv** untuk menyimpan file akhir yang sudah bersih dan siap digunakan untuk *campaign* atau laporan Anda!
+    * Klik tombol utama **🚀 Proses Data Sekarang**.
+    * Periksa ringkasan statistik kecocokan data dan tinjau pratinjau tabel hasilnya.
+    * Klik tombol **📥 Unduh [nama_file].csv** untuk menyimpan file akhir yang sudah bersih dan siap digunakan untuk *campaign* atau laporan Anda!
     """)
 
   if st.button("Tutup Panduan", type="primary", use_container_width=True):
@@ -114,7 +114,8 @@ if file1 and file2:
               else min(1, len(cols1) - 1)
           ),
       )
-      name_case_format = st.selectbox(
+
+    name_case_format = st.selectbox(
           "Pilih Format Huruf Nama:",
           options=["Proper Case", "UPPERCASE", "lowercase"],
           index=0,
@@ -181,7 +182,7 @@ if file1 and file2:
                   custom_key.strip() if custom_key.strip() else col_name
               )
 
-    # --- 4. PROSES DATA & HASIL ---
+# --- 4. PROSES DATA & HASIL ---
     st.divider()
     if st.button("🚀 Proses Data Sekarang", type="primary"):
 
@@ -196,7 +197,7 @@ if file1 and file2:
         if mode == "lowercase":
           return cleaned.lower()
         return cleaned.title()
-
+        
       # Cleaning email
       df1[email_col_file1] = (
           df1[email_col_file1].astype(str).str.strip().str.lower()
@@ -211,7 +212,83 @@ if file1 and file2:
           df1,
           left_on=email_col_file2,
           right_on=email_col_file1,
-          how="left",
+          how="left"
+      )
+      
+      df_merged = df_merged.fillna("")
+
+      # Buat kolom attributes jika diaktifkan
+      if use_attributes and attr_mapping:
+
+        def make_attributes_json(row):
+          attr_dict = {}
+          for original_col, custom_key in attr_mapping.items():
+            if original_col in row and str(row[original_col]) != "":
+              val = row[original_col]
+              if (
+                  original_col == name_col_file1
+                  or "nama" in original_col.lower()
+              ):
+                val = format_text_case(val, name_case_format)
+              attr_dict[custom_key] = val
+          return json.dumps(attr_dict, ensure_ascii=False)
+
+        df_merged["attributes"] = df_merged.apply(make_attributes_json, axis=1)
+
+      # Menentukan kolom email dan nama final
+      df_merged["email"] = df_merged[email_col_file2]
+      if name_col_file1 in df_merged.columns:
+        df_merged["name"] = df_merged[name_col_file1].apply(
+            lambda x: format_text_case(x, name_case_format)
+        )
+      else:
+        df_merged["name"] = ""
+
+      # Susun kolom akhir
+      final_cols = ["email", "name"]
+      if use_attributes and "attributes" in df_merged.columns:
+        final_cols.append("attributes")
+      
+      # Menentukan kolom email dan nama final
+      df_merged["email"] = df_merged[email_col_file2]
+      if name_col_file1 in df_merged.columns:
+        df_merged["name"] = df_merged[name_col_file1].apply(
+            lambda x: format_text_case(x, name_case_format)
+        )
+      else:
+        df_merged["name"] = ""
+      # Susun kolom akhir
+      final_cols = ["email", "name"]
+      if use_attributes and "attributes" in df_merged.columns:
+        final_cols.append("attributes")
+
+      df_result = df_merged[final_cols].copy()
+
+      # --- FILTER DUPLIKAT DI HASIL AKHIR ---
+      # Memastikan tidak ada email kembar/duplikat pada tabel hasil final
+      df_result = df_result.drop_duplicates(subset=["email"]).reset_index(drop=True)
+
+      # Ringkasan Statistik & Preview
+      st.subheader("📈 Hasil Pemrosesan")
+      st.info(
+          f"Total data di File 1: **{len(df1)}** | Total data di File 2: **{len(df2)}** | "
+          f"Total data bersih (Setelah filter duplikat): **{len(df_result)}**"
       )
 
-      df_
+      st.dataframe(df_result.head(10), use_container_width=True)
+
+      # Export CSV
+      csv_buffer = io.StringIO()
+      df_result.to_csv(csv_buffer, index=False, encoding="utf-8-sig")
+      csv_data = csv_buffer.getvalue()
+
+      final_file_name = f"{output_filename.strip() if output_filename else 'hasil_final'}.csv"
+      st.download_button(
+          label=f"📥 Unduh {final_file_name}",
+          data=csv_data,
+          file_name=final_file_name,
+          mime="text/csv",
+      )
+
+  except Exception as e:
+    st.error(f"Terjadi kesalahan saat memproses file: {str(e)}")

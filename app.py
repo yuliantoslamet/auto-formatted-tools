@@ -248,19 +248,6 @@ if file1 and file2:
       final_cols = ["email", "name"]
       if use_attributes and "attributes" in df_merged.columns:
         final_cols.append("attributes")
-      
-      # Menentukan kolom email dan nama final
-      df_merged["email"] = df_merged[email_col_file2]
-      if name_col_file1 in df_merged.columns:
-        df_merged["name"] = df_merged[name_col_file1].apply(
-            lambda x: format_text_case(x, name_case_format)
-        )
-      else:
-        df_merged["name"] = ""
-      # Susun kolom akhir
-      final_cols = ["email", "name"]
-      if use_attributes and "attributes" in df_merged.columns:
-        final_cols.append("attributes")
 
       df_result = df_merged[final_cols].copy()
 
